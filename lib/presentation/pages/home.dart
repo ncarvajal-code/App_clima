@@ -15,7 +15,6 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     Center(child: Text('Clima 🌤️')),
     Center(child: Text('Bienvenido a la app 🚀')),
-    MapaPage(),
   ];
 
   void _onItemTapped(int index) {
