@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'firebase_options.dart';
+
+// páginas
 import 'presentation/pages/login.dart';
 import 'presentation/pages/home.dart';
-import 'core/utils/global.dart';
+import 'presentation/pages/map.dart';
 
-import 'firebase_options.dart';
+// global
+import 'core/utils/global.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } catch (e) {
-    print(" ERROR FIREBASE: $e");
-  }
+  // Inicializar Firebase 
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(MyApp());
 }
@@ -30,12 +31,14 @@ class MyApp extends StatelessWidget {
       title: 'Farmacias App',
       debugShowCheckedModeBanner: false,
 
-      //login
       initialRoute: isLogged ? '/home' : '/login',
 
       routes: {
         '/login': (context) => LoginPage(),
         '/home': (context) => HomePage(),
+
+        // 
+        '/map': (context) => MapaPage(),
       },
     );
   }
