@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/utils/global.dart';
 import 'login.dart';
-import 'map.dart'; // asegúrate que exista
+import 'weather.dart';
+import 'map.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class _HomePageState extends State<HomePage> {
 
   // 🔥 Páginas
   final List<Widget> _pages = [
-    Center(child: Text('Clima 🌤️')),
+    ClimaPage(),
     Center(child: Text('Bienvenido a la app 🚀')),
   ];
 

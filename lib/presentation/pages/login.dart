@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/utils/global.dart';
 import 'home.dart';
 
+import '../../core/utils/global.dart';
+
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
@@ -50,11 +52,11 @@ class LoginPage extends StatelessWidget {
           icon: const Icon(Icons.login),
           label: const Text('Iniciar sesión con Google'),
           onPressed: () async {
-            final user = await signInWithGoogle();
+            user = await signInWithGoogle();
 
             if (user != null) {
               isLogged = true;
-
+              token = await user?.getIdToken() ?? '';
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => HomePage()),
