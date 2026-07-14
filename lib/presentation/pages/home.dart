@@ -3,6 +3,10 @@ import '../../core/utils/global.dart';
 import 'login.dart';
 import 'weather.dart';
 import 'map.dart';
+import '../widgets/home_content.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,10 +16,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 1;
 
-  // 🔥 Páginas
+  //  Paginas
   final List<Widget> _pages = [
     ClimaPage(),
-    Center(child: Text('Bienvenido a la app 🚀')),
+    HomeContent(),
+    MapPage()
   ];
 
   void _onItemTapped(int index) {
@@ -24,13 +29,15 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void logout(BuildContext context) {
-    isLogged = false;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => LoginPage()),
-    );
-  }
+void logout(BuildContext context) async {
+  await FirebaseAuth.instance.signOut();
+  await GoogleSignIn().signOut();
+
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (_) => LoginPage()),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +52,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
 
-      // 🔥 CONTENIDO DINÁMICO
+      //  Contenido dinamico
       body: _pages[_selectedIndex],
 
       // 🔥 BOTTOM NAVIGATION BAR

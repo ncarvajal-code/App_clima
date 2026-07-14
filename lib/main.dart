@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
 // páginas
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       title: 'Farmacias App',
       debugShowCheckedModeBanner: false,
 
-      initialRoute: isLogged ? '/home' : '/login',
+      initialRoute : FirebaseAuth.instance.currentUser != null ? '/home' : '/login',
 
       routes: {
         '/login': (context) => LoginPage(),
