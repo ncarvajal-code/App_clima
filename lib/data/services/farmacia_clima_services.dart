@@ -30,8 +30,6 @@ class ApiService {
   // El Clima
   static Future<dynamic> getClima(double lat, double lng) async {
     final url = Uri.parse('$baseUrl/v1/clima/$lat/$lng');
-    print('$token');
-
     final response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200) {
