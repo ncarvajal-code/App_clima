@@ -43,12 +43,14 @@ class ApiService {
 }
 // Service
 class FarmaciaService {
+  static const String baseUrl = 'https://api.sebastian.cl/cmutem';
+  static Map<String, String> get headers => {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', 
+      };
   static Future<Map<String, dynamic>> getFarmacia(double lat, double lng) async {
-    final url = Uri.parse(
-      'https://TU_API/farmacias/$lat/$lng',
-    );
-
-    final response = await http.get(url);
+    final url = Uri.parse('$baseUrl/v1/farmacias/$lat/$lng');
+    final response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
