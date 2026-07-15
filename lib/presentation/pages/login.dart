@@ -10,7 +10,8 @@ import '../../core/utils/global.dart';
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+final GoogleSignIn _googleSignIn = GoogleSignIn(
+  serverClientId: '469200361363-p7cqp0mvgkmbolpg8fsaa2qni434gid6.apps.googleusercontent.com',);
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<User?> signInWithGoogle() async {
@@ -25,7 +26,7 @@ class LoginPage extends StatelessWidget {
       // 🔹 Obtener autenticación
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
-
+      token = googleAuth.idToken ?? '';
       // 🔹 Crear credenciales
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -56,7 +57,6 @@ class LoginPage extends StatelessWidget {
 
             if (user != null) {
               isLogged = true;
-              token = await user?.getIdToken() ?? '';
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => HomePage()),

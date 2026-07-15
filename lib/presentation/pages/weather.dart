@@ -50,6 +50,12 @@ class _ClimaPageState extends State<ClimaPage> {
     );
   }
 
+  // 🔹 Detecta el valor centinela "sin datos" del sensor (-32768)
+  String formatValor(num valor, String unidad) {
+    if (valor == -32768) return 'Sin datos';
+    return '$valor $unidad';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +66,7 @@ class _ClimaPageState extends State<ClimaPage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : error.isNotEmpty
-              ? Center(child: Text('Error en la carga del servidor intenta mas tarde'))
+              ? Center(child: Text(error))
               : RefreshIndicator(
                   onRefresh: cargarClima,
                   child: ListView(
@@ -105,7 +111,7 @@ class _ClimaPageState extends State<ClimaPage> {
 
                       buildCard(
                           'Presión',
-                          '${clima!.presion} hPa',
+                          formatValor(clima!.presion, 'hPa'),
                           Icons.speed),
 
                       buildCard(
@@ -115,7 +121,7 @@ class _ClimaPageState extends State<ClimaPage> {
 
                       buildCard(
                           'Precipitación',
-                          '${clima!.precipitacion} mm',
+                          formatValor(clima!.precipitacion, 'mm'),
                           Icons.grain),
 
                       buildCard(

@@ -33,23 +33,23 @@ class Clima {
     required this.lluviaDiaria,
   });
   // Parse 
-  factory Clima.fromJson(Map<String, dynamic> json) {
-    return Clima(
-      idObservacion: json['id_observacion'],
-      fechaHora: DateTime.parse(json['fecha_hora']),
-      temperatura: (json['temperatura'] as num).toDouble(),
-      humedad: json['humedad'],
-      velocidadViento: (json['velocidad_viento'] as num).toDouble(),
-      direccionViento: json['direccion_viento'],
-      radiacionSolar: json['radiacion_solar'],
-      presionAbsoluta: (json['presion_absoluta'] as num).toDouble(),
-      precipitacion: json['precipitacion'],
-      puntoRocio: (json['punto_rocio'] as num).toDouble(),
-      rachaViento: (json['racha_viento'] as num).toDouble(),
-      presion: (json['presion'] as num).toDouble(),
-      tasaLluvia: json['tasalluvia'],
-      ultravioleta: json['ultravioleta'],
-      lluviaDiaria: json['lluviadiaria'],
-    );
-  }
+ factory Clima.fromJson(Map<String, dynamic> json) {
+  return Clima(
+    idObservacion: json['id_observacion'],
+    fechaHora: DateTime.parse(json['fecha_hora']),
+    temperatura: (json['temperatura'] as num).toDouble(),
+    humedad: (json['humedad'] as num).toInt(),
+    velocidadViento: (json['velocidad_viento'] as num).toDouble(),
+    direccionViento: (json['direccion_viento'] as num).toInt(),
+    radiacionSolar: (json['radiacion_solar'] as num).toInt(),
+    presionAbsoluta: (json['presion_absoluta'] as num).toDouble(),
+    precipitacion: (json['precipitacion'] as num).toInt(),
+    puntoRocio: (json['punto_rocio'] as num).toDouble(),
+    rachaViento: (json['racha_viento'] as num).toDouble(),
+    presion: (json['presion'] as num).toDouble(),
+    tasaLluvia: (json['tasalluvia'] as num).toInt(),
+    ultravioleta: (json['ultravioleta'] as num).toInt(),
+    lluviaDiaria: (json['lluviadiaria'] as num).toInt(),
+  );
+}
 }

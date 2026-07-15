@@ -37,9 +37,8 @@ void logout(BuildContext context) async {
   await FirebaseAuth.instance.signOut();
   await GoogleSignIn().signOut();
 
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (_) => LoginPage()),
+  Navigator.pushReplacement(context,
+  MaterialPageRoute(builder: (_) => LoginPage()),
   );
 }
 

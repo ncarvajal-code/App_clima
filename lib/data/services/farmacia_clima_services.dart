@@ -17,8 +17,13 @@ class ApiService {
   // Farmacias
   static Future<dynamic> getFarmacias(double lat, double lng) async {
     final url = Uri.parse('$baseUrl/v1/farmacias/$lat/$lng');
+    print('🔹 URL: $url');
+    print('🔹 Token: $token');
+    print('🔹 Headers: $headers');
 
     final response = await http.get(url, headers: headers);
+    print('🔹 Status: ${response.statusCode}');
+    print('🔹 Body: ${response.body}');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
