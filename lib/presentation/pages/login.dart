@@ -32,7 +32,7 @@ class LoginPage extends StatelessWidget {
         idToken: googleAuth.idToken,
       );
 
-      // 🔹 Login en Firebase
+      //  Login en Firebase
       final UserCredential userCredential =
           await _auth.signInWithCredential(credential);
 

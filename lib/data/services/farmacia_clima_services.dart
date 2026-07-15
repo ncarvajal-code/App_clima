@@ -4,6 +4,7 @@ import '../../core/utils/global.dart';
 import '../models/farmacia_model.dart';
 import '../models/clima_model.dart';
 
+
 class ApiService {
   static const String baseUrl = 'https://api.sebastian.cl/cmutem';
 
@@ -37,6 +38,22 @@ class ApiService {
       return Clima.fromJson(data);
     } else {
       throw Exception('Error clima: ${response.statusCode}');
+    }
+  }
+}
+// Service
+class FarmaciaService {
+  static Future<Map<String, dynamic>> getFarmacia(double lat, double lng) async {
+    final url = Uri.parse(
+      'https://TU_API/farmacias/$lat/$lng',
+    );
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Error farmacia');
     }
   }
 }

@@ -7,6 +7,9 @@ import '../widgets/home_content.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../data/services/location_services.dart';
+import '../../data/services/farmacia_clima_services.dart';
+import 'map.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -21,6 +24,7 @@ class _HomePageState extends State<HomePage> {
     ClimaPage(),
     HomeContent(),
     MapPage()
+    
   ];
 
   void _onItemTapped(int index) {
@@ -55,7 +59,7 @@ void logout(BuildContext context) async {
       //  Contenido dinamico
       body: _pages[_selectedIndex],
 
-      // 🔥 BOTTOM NAVIGATION BAR
+      //  Bottom navegation "BAR"
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
