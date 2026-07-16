@@ -3,7 +3,6 @@ import '../../core/utils/global.dart';
 import 'login.dart';
 import 'weather.dart';
 import 'map.dart';
-import 'farmacia.dart';
 import '../widgets/home_content.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -23,9 +22,8 @@ class _HomePageState extends State<HomePage> {
   //  Paginas
   final List<Widget> _pages = [
     ClimaPage(),
-    HomeContent(),
+    const HomeContent(),
     MapPage(),
-    const FarmaciaPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -49,11 +47,6 @@ void logout(BuildContext context) async {
       appBar: AppBar(
         title: Text('Farmacias App'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.local_pharmacy),
-            tooltip: 'Farmacia más cercana',
-            onPressed: () => _onItemTapped(3),
-          ),
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () => logout(context),
@@ -81,10 +74,6 @@ void logout(BuildContext context) async {
           BottomNavigationBarItem(
             icon: Icon(Icons.map), // mapa
             label: 'Mapa',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_pharmacy), // farmacia
-            label: 'Farmacia',
           ),
         ],
       ),
