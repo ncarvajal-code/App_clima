@@ -217,6 +217,47 @@ class _HomeContentState extends State<HomeContent>
     );
   }
 
+  /// Elemento puramente visual — sin llamadas a servicios ni estado nuevo.
+  /// Rellena el espacio vacío bajo la tarjeta con un mensaje temático y
+  /// un pequeño collage de íconos difuminados.
+  Widget _buildDecorativeFooter() {
+    return Column(
+      children: [
+        SizedBox(
+          height: 90,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+                left: 20,
+                child: Icon(Icons.wb_sunny_rounded,
+                    size: 46, color: kAccentClima.withOpacity(0.15)),
+              ),
+              Icon(Icons.local_pharmacy_rounded,
+                  size: 64, color: kPrimary.withOpacity(0.12)),
+              Positioned(
+                right: 16,
+                child: Icon(Icons.water_drop_rounded,
+                    size: 40, color: kAccentClima.withOpacity(0.15)),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          'Cuida tu salud, cuida tu tiempo.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: kTextSoft.withOpacity(0.8),
+            letterSpacing: 0.2,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -235,6 +276,8 @@ class _HomeContentState extends State<HomeContent>
                     opacity: _fadeIn,
                     child: _buildFarmaciaCard(),
                   ),
+                  const SizedBox(height: 36),
+                  _buildDecorativeFooter(),
                 ],
               ),
             ),
