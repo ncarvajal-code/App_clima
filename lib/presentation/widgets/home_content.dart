@@ -12,17 +12,48 @@ class HomeContent extends StatefulWidget {
   _HomeContentState createState() => _HomeContentState();
 }
 
-class _HomeContentState extends State<HomeContent> {
+class _HomeContentState extends State<HomeContent>
+    with TickerProviderStateMixin {
   Map<String, dynamic>? farmacia;
   Position? _pos;
   bool loading = true;
   bool sinResultados = false;
   String error = '';
 
+  // 🔹 Animación de entrada: todo el contenido aparece con fade-in.
+  late final AnimationController _fadeController;
+  late final Animation<double> _fadeIn;
+
+  // 🔹 Animación de "respiración": el ícono del encabezado pulsa suavemente.
+  late final AnimationController _pulseController;
+  late final Animation<double> _pulse;
+
   @override
   void initState() {
     super.initState();
+
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _fadeIn = CurvedAnimation(parent: _fadeController, curve: Curves.easeOut);
+
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    )..repeat(reverse: true);
+    _pulse = Tween<double>(begin: 1.0, end: 1.12).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
     cargarFarmacia();
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    _pulseController.dispose();
+    super.dispose();
   }
 
   Future<void> cargarFarmacia() async {
@@ -45,6 +76,7 @@ class _HomeContentState extends State<HomeContent> {
         farmacia = data;
         loading = false;
       });
+      _fadeController.forward(from: 0);
     } on FarmaciaNoEncontradaException {
       if (!mounted) return;
       setState(() {
@@ -52,6 +84,7 @@ class _HomeContentState extends State<HomeContent> {
         farmacia = null;
         loading = false;
       });
+      _fadeController.forward(from: 0);
     } catch (e) {
       print("ERROR: $e");
       if (!mounted) return;
@@ -59,6 +92,7 @@ class _HomeContentState extends State<HomeContent> {
         error = e.toString();
         loading = false;
       });
+      _fadeController.forward(from: 0);
     }
   }
 
@@ -67,6 +101,12 @@ class _HomeContentState extends State<HomeContent> {
     if (hora < 12) return 'Buenos días';
     if (hora < 19) return 'Buenas tardes';
     return 'Buenas noches';
+  }
+
+  IconData _iconoSaludo() {
+    final hora = DateTime.now().hour;
+    if (hora < 19) return Icons.wb_sunny_rounded;
+    return Icons.nightlight_round;
   }
 
   /// Compara la hora actual contra apertura/cierre (formato "HH:mm" o
@@ -101,34 +141,105 @@ class _HomeContentState extends State<HomeContent> {
     return nowMin >= openMin || nowMin < closeMin;
   }
 
+  Widget _buildHeaderBanner() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(20, 28, 20, 32),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [kPrimary, Color(0xFF16553A)],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
+      ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Patrón decorativo temático: cruz de farmacia + sol/luna, de fondo.
+          Positioned(
+            right: -18,
+            top: -10,
+            child: Icon(Icons.local_pharmacy_rounded,
+                size: 120, color: Colors.white.withOpacity(0.08)),
+          ),
+          Positioned(
+            right: 70,
+            bottom: -24,
+            child: Icon(_iconoSaludo(),
+                size: 64, color: Colors.white.withOpacity(0.12)),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  // Ícono que "respira": escala de 1.0 a 1.12 en loop.
+                  ScaleTransition(
+                    scale: _pulse,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(_iconoSaludo(), color: Colors.white, size: 22),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    _saludo(),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Tu farmacia más cercana y el clima, al instante.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white.withOpacity(0.85),
+                  height: 1.3,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       color: kBg,
-      child: RefreshIndicator(
-        color: kPrimary,
-        onRefresh: cargarFarmacia,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
-          children: [
-            Text(
-              _saludo(),
-              style: const TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w700,
-                color: kTextStrong,
-                letterSpacing: -0.5,
+      child: Column(
+        children: [
+          _buildHeaderBanner(),
+          Expanded(
+            child: RefreshIndicator(
+              color: kPrimary,
+              onRefresh: cargarFarmacia,
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                children: [
+                  FadeTransition(
+                    opacity: _fadeIn,
+                    child: _buildFarmaciaCard(),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 4),
-            const Text(
-              'Tu farmacia más cercana y el clima, al instante.',
-              style: TextStyle(fontSize: 14, color: kTextSoft, height: 1.3),
-            ),
-            const SizedBox(height: 24),
-            _buildFarmaciaCard(),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -157,13 +268,22 @@ class _HomeContentState extends State<HomeContent> {
           border: Border.all(color: kBorder),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.nightlight_round, color: kTextSoft),
-            const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: kBg,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.nightlight_round,
+                  color: kTextSoft, size: 18),
+            ),
+            const SizedBox(width: 14),
             const Expanded(
               child: Text(
                 'No hay farmacias de turno cerca de ti en este momento.',
-                style: TextStyle(color: kTextStrong),
+                style: TextStyle(color: kTextStrong, height: 1.3),
               ),
             ),
             TextButton(
@@ -184,13 +304,21 @@ class _HomeContentState extends State<HomeContent> {
           border: Border.all(color: kBorder),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.error_outline, color: kError),
-            const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: kError.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.error_outline, color: kError, size: 18),
+            ),
+            const SizedBox(width: 14),
             const Expanded(
               child: Text(
                 'No se pudo cargar la farmacia más cercana.',
-                style: TextStyle(color: kTextStrong),
+                style: TextStyle(color: kTextStrong, height: 1.3),
               ),
             ),
             TextButton(
