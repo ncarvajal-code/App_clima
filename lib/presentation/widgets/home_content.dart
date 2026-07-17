@@ -16,6 +16,7 @@ class _HomeContentState extends State<HomeContent> {
   Map<String, dynamic>? farmacia;
   Position? _pos;
   bool loading = true;
+  bool sinResultados = false;
   String error = '';
 
   @override
@@ -27,6 +28,7 @@ class _HomeContentState extends State<HomeContent> {
   Future<void> cargarFarmacia() async {
     setState(() {
       loading = true;
+      sinResultados = false;
       error = '';
     });
     try {
@@ -41,6 +43,13 @@ class _HomeContentState extends State<HomeContent> {
       if (!mounted) return;
       setState(() {
         farmacia = data;
+        loading = false;
+      });
+    } on FarmaciaNoEncontradaException {
+      if (!mounted) return;
+      setState(() {
+        sinResultados = true;
+        farmacia = null;
         loading = false;
       });
     } catch (e) {
@@ -135,6 +144,33 @@ class _HomeContentState extends State<HomeContent> {
         ),
         child: const Center(
           child: CircularProgressIndicator(color: kPrimary),
+        ),
+      );
+    }
+
+    if (sinResultados) {
+      return Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: kSurface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: kBorder),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.nightlight_round, color: kTextSoft),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'No hay farmacias de turno cerca de ti en este momento.',
+                style: TextStyle(color: kTextStrong),
+              ),
+            ),
+            TextButton(
+              onPressed: cargarFarmacia,
+              child: const Text('Reintentar'),
+            ),
+          ],
         ),
       );
     }

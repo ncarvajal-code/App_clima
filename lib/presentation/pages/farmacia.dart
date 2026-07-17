@@ -20,6 +20,7 @@ class FarmaciaPage extends StatefulWidget {
 class _FarmaciaPageState extends State<FarmaciaPage> {
   Farmacia? farmacia;
   bool isLoading = true;
+  bool sinResultados = false;
   String error = '';
 
   @override
@@ -31,6 +32,7 @@ class _FarmaciaPageState extends State<FarmaciaPage> {
   Future<void> cargarFarmacia() async {
     setState(() {
       isLoading = true;
+      sinResultados = false;
       error = '';
     });
     try {
@@ -52,6 +54,13 @@ class _FarmaciaPageState extends State<FarmaciaPage> {
 
       setState(() {
         farmacia = Farmacia.fromJson(data);
+        isLoading = false;
+      });
+    } on FarmaciaNoEncontradaException {
+      if (!mounted) return;
+      setState(() {
+        sinResultados = true;
+        farmacia = null;
         isLoading = false;
       });
     } catch (e) {
@@ -152,6 +161,37 @@ class _FarmaciaPageState extends State<FarmaciaPage> {
           if (isLoading) {
             return const Center(
               child: CircularProgressIndicator(color: kPrimary),
+            );
+          }
+
+          if (sinResultados) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.nightlight_round,
+                        color: kTextSoft, size: 48),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'No hay farmacias de turno cerca de tu ubicación\nen este momento.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: kTextStrong),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: cargarFarmacia,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kPrimary,
+                        foregroundColor: Colors.white,
+                      ),
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Reintentar'),
+                    ),
+                  ],
+                ),
+              ),
             );
           }
 
